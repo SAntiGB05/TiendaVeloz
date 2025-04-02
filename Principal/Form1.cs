@@ -1,4 +1,4 @@
-namespace TiendaVeloz
+namespace Principal
 {
     public partial class Form1 : Form
     {
