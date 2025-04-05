@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace principal
 {
-    public partial class Proveedor: Form
+    public partial class crearProducto : Form
     {
-        public Proveedor()
+        public crearProducto()
         {
             InitializeComponent();
         }
