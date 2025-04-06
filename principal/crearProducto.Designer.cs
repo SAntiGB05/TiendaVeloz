@@ -29,22 +29,25 @@
         private void InitializeComponent()
         {
             lbTitleCliente = new Label();
-            textBox1 = new TextBox();
-            textBox2 = new TextBox();
-            textBox3 = new TextBox();
-            textBox4 = new TextBox();
-            textBox5 = new TextBox();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
-            dataGridView1 = new DataGridView();
+            textStock_producto = new TextBox();
+            textPrecio_producto = new TextBox();
+            textNombre_producto = new TextBox();
+            textDescripcion_producto = new TextBox();
+            lbPrecio_producto = new Label();
+            lbNombre_producto = new Label();
+            lbStock_producto = new Label();
+            lbDescripcion_producto = new Label();
+            dvgProducto = new DataGridView();
+            cod_Producto = new DataGridViewTextBoxColumn();
+            nombre_producto = new DataGridViewTextBoxColumn();
+            precio_producto = new DataGridViewTextBoxColumn();
+            descripcion_producto = new DataGridViewTextBoxColumn();
+            Stock = new DataGridViewTextBoxColumn();
             btnLimpiar = new Button();
             btnEliminar = new Button();
             btnActualizar = new Button();
             btnAgregar = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dvgProducto).BeginInit();
             SuspendLayout();
             // 
             // lbTitleCliente
@@ -52,101 +55,123 @@
             lbTitleCliente.BackColor = SystemColors.ActiveBorder;
             lbTitleCliente.Font = new Font("Segoe UI Black", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lbTitleCliente.ForeColor = SystemColors.ControlText;
-            lbTitleCliente.Location = new Point(30, 27);
+            lbTitleCliente.Location = new Point(30, 9);
             lbTitleCliente.Name = "lbTitleCliente";
             lbTitleCliente.Size = new Size(594, 52);
             lbTitleCliente.TabIndex = 17;
             lbTitleCliente.Text = "CRUD Producto";
             lbTitleCliente.TextAlign = ContentAlignment.MiddleLeft;
+            lbTitleCliente.Click += lbTitleCliente_Click;
             // 
-            // textBox1
+            // textStock_producto
             // 
-            textBox1.Location = new Point(499, 125);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(125, 27);
-            textBox1.TabIndex = 18;
+            textStock_producto.Location = new Point(500, 114);
+            textStock_producto.Name = "textStock_producto";
+            textStock_producto.Size = new Size(125, 27);
+            textStock_producto.TabIndex = 18;
             // 
-            // textBox2
+            // textPrecio_producto
             // 
-            textBox2.Location = new Point(178, 158);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(125, 27);
-            textBox2.TabIndex = 19;
+            textPrecio_producto.Location = new Point(178, 117);
+            textPrecio_producto.Name = "textPrecio_producto";
+            textPrecio_producto.Size = new Size(125, 27);
+            textPrecio_producto.TabIndex = 19;
             // 
-            // textBox3
+            // textNombre_producto
             // 
-            textBox3.Location = new Point(178, 125);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(125, 27);
-            textBox3.TabIndex = 20;
+            textNombre_producto.Location = new Point(178, 84);
+            textNombre_producto.Name = "textNombre_producto";
+            textNombre_producto.Size = new Size(125, 27);
+            textNombre_producto.TabIndex = 20;
             // 
-            // textBox4
+            // textDescripcion_producto
             // 
-            textBox4.Location = new Point(178, 92);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(125, 27);
-            textBox4.TabIndex = 21;
+            textDescripcion_producto.Location = new Point(500, 81);
+            textDescripcion_producto.Name = "textDescripcion_producto";
+            textDescripcion_producto.Size = new Size(125, 27);
+            textDescripcion_producto.TabIndex = 22;
             // 
-            // textBox5
+            // lbPrecio_producto
             // 
-            textBox5.Location = new Point(499, 92);
-            textBox5.Name = "textBox5";
-            textBox5.Size = new Size(125, 27);
-            textBox5.TabIndex = 22;
+            lbPrecio_producto.AutoSize = true;
+            lbPrecio_producto.Location = new Point(93, 120);
+            lbPrecio_producto.Name = "lbPrecio_producto";
+            lbPrecio_producto.Size = new Size(50, 20);
+            lbPrecio_producto.TabIndex = 24;
+            lbPrecio_producto.Text = "Precio";
             // 
-            // label1
+            // lbNombre_producto
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(93, 95);
-            label1.Name = "label1";
-            label1.Size = new Size(40, 20);
-            label1.TabIndex = 23;
-            label1.Text = "COD";
+            lbNombre_producto.AutoSize = true;
+            lbNombre_producto.Location = new Point(93, 87);
+            lbNombre_producto.Name = "lbNombre_producto";
+            lbNombre_producto.Size = new Size(64, 20);
+            lbNombre_producto.TabIndex = 25;
+            lbNombre_producto.Text = "Nombre";
             // 
-            // label2
+            // lbStock_producto
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(93, 161);
-            label2.Name = "label2";
-            label2.Size = new Size(50, 20);
-            label2.TabIndex = 24;
-            label2.Text = "Precio";
+            lbStock_producto.AutoSize = true;
+            lbStock_producto.Location = new Point(390, 117);
+            lbStock_producto.Name = "lbStock_producto";
+            lbStock_producto.Size = new Size(45, 20);
+            lbStock_producto.TabIndex = 26;
+            lbStock_producto.Text = "Stock";
             // 
-            // label3
+            // lbDescripcion_producto
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(93, 128);
-            label3.Name = "label3";
-            label3.Size = new Size(64, 20);
-            label3.TabIndex = 25;
-            label3.Text = "Nombre";
+            lbDescripcion_producto.AutoSize = true;
+            lbDescripcion_producto.Location = new Point(390, 84);
+            lbDescripcion_producto.Name = "lbDescripcion_producto";
+            lbDescripcion_producto.Size = new Size(87, 20);
+            lbDescripcion_producto.TabIndex = 27;
+            lbDescripcion_producto.Text = "Descripcion";
             // 
-            // label4
+            // dvgProducto
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(389, 128);
-            label4.Name = "label4";
-            label4.Size = new Size(45, 20);
-            label4.TabIndex = 26;
-            label4.Text = "Stock";
+            dvgProducto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dvgProducto.Columns.AddRange(new DataGridViewColumn[] { cod_Producto, nombre_producto, precio_producto, descripcion_producto, Stock });
+            dvgProducto.Location = new Point(12, 165);
+            dvgProducto.Name = "dvgProducto";
+            dvgProducto.RowHeadersWidth = 51;
+            dvgProducto.Size = new Size(776, 228);
+            dvgProducto.TabIndex = 28;
+            dvgProducto.CellContentClick += dvgProducto_CellContentClick;
             // 
-            // label5
+            // cod_Producto
             // 
-            label5.AutoSize = true;
-            label5.Location = new Point(389, 95);
-            label5.Name = "label5";
-            label5.Size = new Size(87, 20);
-            label5.TabIndex = 27;
-            label5.Text = "Descripcion";
+            cod_Producto.HeaderText = "Cod";
+            cod_Producto.MinimumWidth = 6;
+            cod_Producto.Name = "cod_Producto";
+            cod_Producto.Width = 70;
             // 
-            // dataGridView1
+            // nombre_producto
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 191);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(776, 202);
-            dataGridView1.TabIndex = 28;
+            nombre_producto.HeaderText = "Nombre";
+            nombre_producto.MinimumWidth = 6;
+            nombre_producto.Name = "nombre_producto";
+            nombre_producto.Width = 150;
+            // 
+            // precio_producto
+            // 
+            precio_producto.HeaderText = "Precio";
+            precio_producto.MinimumWidth = 6;
+            precio_producto.Name = "precio_producto";
+            precio_producto.Width = 125;
+            // 
+            // descripcion_producto
+            // 
+            descripcion_producto.HeaderText = "Drescripcion";
+            descripcion_producto.MinimumWidth = 6;
+            descripcion_producto.Name = "descripcion_producto";
+            descripcion_producto.Width = 290;
+            // 
+            // Stock
+            // 
+            Stock.HeaderText = "Stock";
+            Stock.MinimumWidth = 6;
+            Stock.Name = "Stock";
+            Stock.Width = 90;
             // 
             // btnLimpiar
             // 
@@ -177,12 +202,13 @@
             // 
             // btnAgregar
             // 
-            btnAgregar.Location = new Point(11, 399);
+            btnAgregar.Location = new Point(12, 399);
             btnAgregar.Name = "btnAgregar";
             btnAgregar.Size = new Size(91, 39);
             btnAgregar.TabIndex = 29;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = true;
+            btnAgregar.Click += btnAgregar_Click;
             // 
             // crearProducto
             // 
@@ -193,21 +219,19 @@
             Controls.Add(btnEliminar);
             Controls.Add(btnActualizar);
             Controls.Add(btnAgregar);
-            Controls.Add(dataGridView1);
-            Controls.Add(label5);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(textBox5);
-            Controls.Add(textBox4);
-            Controls.Add(textBox3);
-            Controls.Add(textBox2);
-            Controls.Add(textBox1);
+            Controls.Add(dvgProducto);
+            Controls.Add(lbDescripcion_producto);
+            Controls.Add(lbStock_producto);
+            Controls.Add(lbNombre_producto);
+            Controls.Add(lbPrecio_producto);
+            Controls.Add(textDescripcion_producto);
+            Controls.Add(textNombre_producto);
+            Controls.Add(textPrecio_producto);
+            Controls.Add(textStock_producto);
             Controls.Add(lbTitleCliente);
             Name = "crearProducto";
             Text = "crearProducto";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dvgProducto).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -215,20 +239,23 @@
         #endregion
 
         private Label lbTitleCliente;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private TextBox textBox3;
-        private TextBox textBox4;
-        private TextBox textBox5;
-        private Label label1;
-        private Label label2;
-        private Label label3;
-        private Label label4;
-        private Label label5;
-        private DataGridView dataGridView1;
+        private TextBox textStock_producto;
+        private TextBox textPrecio_producto;
+        private TextBox textNombre_producto;
+        private TextBox textDescripcion_producto;
+        private Label lbPrecio_producto;
+        private Label lbNombre_producto;
+        private Label lbStock_producto;
+        private Label lbDescripcion_producto;
+        private DataGridView dvgProducto;
         private Button btnLimpiar;
         private Button btnEliminar;
         private Button btnActualizar;
         private Button btnAgregar;
+        private DataGridViewTextBoxColumn cod_Producto;
+        private DataGridViewTextBoxColumn nombre_producto;
+        private DataGridViewTextBoxColumn precio_producto;
+        private DataGridViewTextBoxColumn descripcion_producto;
+        private DataGridViewTextBoxColumn Stock;
     }
 }

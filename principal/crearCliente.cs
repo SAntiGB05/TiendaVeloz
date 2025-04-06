@@ -123,5 +123,10 @@ namespace principal
         {
 
         }
+
+        private void lbTitleCliente_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

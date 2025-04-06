@@ -7,11 +7,11 @@ namespace Logica
 {
     public class ProductoControler
     {
-        public string GuardarProducto(int cod_productos, string nombre_producto, int precio_producto, string descripcion_producto, int stock)
+        public string GuardarProducto(string nombre_producto, int precio_producto, string descripcion_producto, int stock)
         {
             string resultado;
             BaseDatos db = new BaseDatos();
-            int filasInsertadas = db.GuardarProducto(cod_productos,nombre_producto, precio_producto, descripcion_producto, stock);
+            int filasInsertadas = db.GuardarProducto(nombre_producto, precio_producto, descripcion_producto, stock);
 
             if (filasInsertadas > 0)
             {

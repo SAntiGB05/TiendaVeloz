@@ -200,6 +200,7 @@
             lbTitleCliente.TabIndex = 16;
             lbTitleCliente.Text = "CRUD Cliente";
             lbTitleCliente.TextAlign = ContentAlignment.MiddleLeft;
+            lbTitleCliente.Click += lbTitleCliente_Click;
             // 
             // crearCliente
             // 

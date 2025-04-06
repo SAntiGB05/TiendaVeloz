@@ -88,7 +88,6 @@ C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\bin\Debug\net8.0-windows
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.csproj.AssemblyReference.cache
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.crearCliente.resources
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.Form1.resources
-C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.Proveedor.resources
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.csproj.GenerateResource.cache
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.AssemblyInfoInputs.cache
@@ -101,3 +100,4 @@ C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.genruntimeconfig.cache
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\ref\principal.dll
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.sourcelink.json
+C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.crearProducto.resources

@@ -22,3 +22,4 @@ C:\Users\User\OneDrive\Escritorio\TiendaVeloz\Modelo\obj\Debug\net8.0\Modelo.dll
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\Modelo\obj\Debug\net8.0\refint\Modelo.dll
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\Modelo\obj\Debug\net8.0\Modelo.pdb
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\Modelo\obj\Debug\net8.0\ref\Modelo.dll
+C:\Users\User\OneDrive\Escritorio\TiendaVeloz\Modelo\obj\Debug\net8.0\Modelo.sourcelink.json

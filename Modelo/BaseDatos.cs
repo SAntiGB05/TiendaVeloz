@@ -11,12 +11,11 @@ namespace Modelo
 {
     public class BaseDatos : ConexionMySql
     {
-        public int GuardarProducto(int cod_productos, string nombre_producto, int precio_producto, string descripcion_producto, int stock)
+        public int GuardarProducto(string nombre_producto, int precio_producto, string descripcion_producto, int stock)
         {
             MySqlCommand cmd = GetConnection().CreateCommand();
-            cmd.CommandText = "INSERT INTO producto (cod_productos, nombre_producto, precio_producto, descripcion_producto, stock) VALUES (@Cod, @Nombre, @Precio, @Descripcion, @Stock)";
+            cmd.CommandText = "INSERT INTO productos (nombre_producto, precio_producto, descripcion_producto, stock) VALUES (@Nombre, @Precio, @Descripcion, @Stock)";
             
-            cmd.Parameters.AddWithValue("@Cod", cod_productos);
             cmd.Parameters.AddWithValue("@Nombre", nombre_producto);
             cmd.Parameters.AddWithValue("@Precio", precio_producto);
             cmd.Parameters.AddWithValue("@Descripcion", descripcion_producto);
@@ -54,7 +53,7 @@ namespace Modelo
             try
             {
                 MySqlCommand cmd = GetConnection().CreateCommand();
-                cmd.CommandText = "UPDATE producto SET nombre_producto = @Nombre, precio_producto = @Precio, descripcion_producto = @Descripcion, stock = @Stock WHERE cod_productos = @Cod";
+                cmd.CommandText = "UPDATE productos SET nombre_producto = @Nombre, precio_producto = @Precio, descripcion_producto = @Descripcion, stock = @Stock WHERE cod_productos = @Cod";
 
                 cmd.Parameters.AddWithValue("@Cod", productoActualizado.cod_productos);
                 cmd.Parameters.AddWithValue("@Nombre", productoActualizado.nombre_producto);
@@ -78,7 +77,7 @@ namespace Modelo
             try
             {
                 MySqlCommand cmd = GetConnection().CreateCommand();
-                cmd.CommandText = "DELETE FROM producto WHERE cod_productos = @Cod";
+                cmd.CommandText = "DELETE FROM productos WHERE cod_productos = @Cod";
 
                 cmd.Parameters.AddWithValue("@Cod", cod_productos);
 
