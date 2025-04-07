@@ -4,6 +4,9 @@
     <Compile Update="crearCliente.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="crearEmpleado.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="crearProducto.cs">
       <SubType>Form</SubType>
     </Compile>

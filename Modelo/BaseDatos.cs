@@ -11,6 +11,97 @@ namespace Modelo
 {
     public class BaseDatos : ConexionMySql
     {
+        public int GuardarEmpleado(int cedula_empleado, string nombre_empleado, string telefono_empleado, string rol_empleado, int pin_acceso)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "INSERT INTO empleado (cedula_empleado,nombre_empleado,telefono_empleado,rol_empleado,pin_acceso) VALUES ('" + cedula_empleado + "','" + nombre_empleado + "','" + telefono_empleado + "','" + rol_empleado + "', '" + pin_acceso + "')";
+            int filasAfectadas = cmd.ExecuteNonQuery();
+
+            return filasAfectadas;
+        }
+
+        public List<EmpleadoEntity> MostrarEmpleado()
+        {
+            List<EmpleadoEntity> listaEmpleado = new List<EmpleadoEntity>();
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "SELECT * FROM empleado";
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                EmpleadoEntity empleado = new EmpleadoEntity
+                {
+                    Id = reader.GetInt32(0),
+                    cedula_empleado = reader.GetInt32(1),
+                    nombre_empleado = reader.GetString(2),
+                    telefono_empleado = reader.GetString(3),
+                    rol_empleado = reader.GetString(4),
+                    pin_acceso = reader.GetInt32(5)
+                };
+                listaEmpleado.Add(empleado);
+            }
+            reader.Close();
+            return listaEmpleado;
+        }
+
+
+        public bool ActualizarEmpleado(EmpleadoEntity empleadoActualizado)
+        {
+            try
+            {
+                MySqlConnection connection = GetConnection();
+                MySqlCommand cmd = connection.CreateCommand();
+
+                cmd.CommandText = "UPDATE empleado SET nombre_empleado = @Nombre, telefono_empleado = @Telefono, rol_empleado = @Rol, pin_acceso = @Pin WHERE cedula_empleado = @Cedula";
+
+                cmd.Parameters.AddWithValue("@Nombre", empleadoActualizado.nombre_empleado);
+                cmd.Parameters.AddWithValue("@Telefono", empleadoActualizado.telefono_empleado);
+                cmd.Parameters.AddWithValue("@Rol", empleadoActualizado.rol_empleado);
+                cmd.Parameters.AddWithValue("@Pin", empleadoActualizado.pin_acceso);
+                cmd.Parameters.AddWithValue("@Cedula", empleadoActualizado.cedula_empleado);
+
+                int filasAfectadas = cmd.ExecuteNonQuery();
+
+                if (filasAfectadas > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al actualizar el empleado: " + ex.Message);
+                return false;
+            }
+        }
+
+        public bool EliminarEmpleado(int cedula_empleado)
+        {
+            try
+            {
+                MySqlConnection connection = GetConnection();
+                MySqlCommand cmd = connection.CreateCommand();
+
+                cmd.CommandText = "DELETE FROM empleado WHERE cedula_empleado = @Cedula";
+
+                cmd.Parameters.AddWithValue("@Cedula", cedula_empleado);
+
+                int filasAfectadas = cmd.ExecuteNonQuery();
+
+                if (filasAfectadas > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al eliminar el empleado: " + ex.Message);
+                return false;
+            }
+        }
         public int GuardarProducto(string nombre_producto, int precio_producto, string descripcion_producto, int stock)
         {
             MySqlCommand cmd = GetConnection().CreateCommand();
