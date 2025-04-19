@@ -11,6 +11,96 @@ namespace Modelo
 {
     public class BaseDatos : ConexionMySql
     {
+
+        public int GuardarProveedor(int nit_proveedor, string nombre_proveedor, string direccion_proveedor, string telefono_proveedor)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "INSERT INTO proveedor (nit_proveedor,nombre_proveedor,direccion_proveedor,telefono_proveedor) VALUES ('" + nit_proveedor + "','" + nombre_proveedor + "','" + direccion_proveedor + "','" + telefono_proveedor + "')";
+            int filasAfectadas = cmd.ExecuteNonQuery();
+
+            return filasAfectadas;
+        }
+
+        public List<ProveedorEntity> MostrarProveedor()
+        {
+            List<ProveedorEntity> listaProveedor = new List<ProveedorEntity>();
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "SELECT * FROM proveedor";
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                ProveedorEntity proveedor = new ProveedorEntity
+                {
+                    Id = reader.GetInt32(0),
+                    nit_proveedor = reader.GetInt32(1),
+                    nombre_proveedor = reader.GetString(2),
+                    direccion_proveedor = reader.GetString(3),
+                    telefono_proveedor = reader.GetString(4)
+                };
+                listaProveedor.Add(proveedor);
+            }
+            reader.Close();
+            return listaProveedor;
+        }
+
+
+        public bool ActualizarProveedor(ProveedorEntity proveedorActualizado)
+        {
+            try
+            {
+                MySqlConnection connection = GetConnection();
+                MySqlCommand cmd = connection.CreateCommand();
+
+                cmd.CommandText = "UPDATE proveedor SET nombre_proveedor = @Nombre, direccion_proveedor = @Direccion, telefono_proveedor = @Telefono WHERE nit_proveedor = @Cedula";
+
+                cmd.Parameters.AddWithValue("@Nombre", proveedorActualizado.nombre_proveedor);
+                cmd.Parameters.AddWithValue("@Direccion", proveedorActualizado.direccion_proveedor);
+                cmd.Parameters.AddWithValue("@Telefono", proveedorActualizado.telefono_proveedor);
+                cmd.Parameters.AddWithValue("@Cedula", proveedorActualizado.nit_proveedor);
+
+                int filasAfectadas = cmd.ExecuteNonQuery();
+
+                if (filasAfectadas > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al actualizar el proveedor: " + ex.Message);
+                return false;
+            }
+        }
+
+        public bool EliminarProveedor(int nit_proveedor)
+        {
+            try
+            {
+                MySqlConnection connection = GetConnection();
+                MySqlCommand cmd = connection.CreateCommand();
+
+                cmd.CommandText = "DELETE FROM proveedor WHERE nit_proveedor = @Cedula";
+
+                cmd.Parameters.AddWithValue("@Cedula", nit_proveedor);
+
+                int filasAfectadas = cmd.ExecuteNonQuery();
+
+                if (filasAfectadas > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al eliminar el proveedor: " + ex.Message);
+                return false;
+            }
+        }
         public int GuardarEmpleado(int cedula_empleado, string nombre_empleado, string telefono_empleado, string rol_empleado, int pin_acceso)
         {
             MySqlCommand cmd = GetConnection().CreateCommand();
@@ -106,7 +196,7 @@ namespace Modelo
         {
             MySqlCommand cmd = GetConnection().CreateCommand();
             cmd.CommandText = "INSERT INTO productos (nombre_producto, precio_producto, descripcion_producto, stock) VALUES (@Nombre, @Precio, @Descripcion, @Stock)";
-            
+
             cmd.Parameters.AddWithValue("@Nombre", nombre_producto);
             cmd.Parameters.AddWithValue("@Precio", precio_producto);
             cmd.Parameters.AddWithValue("@Descripcion", descripcion_producto);
@@ -151,7 +241,7 @@ namespace Modelo
                 cmd.Parameters.AddWithValue("@Precio", productoActualizado.precio_producto);
                 cmd.Parameters.AddWithValue("@Descripcion", productoActualizado.descripcion_producto);
                 cmd.Parameters.AddWithValue("@Stock", productoActualizado.stock);
-                
+
 
                 int filasAfectadas = cmd.ExecuteNonQuery();
                 return filasAfectadas > 0;
@@ -230,10 +320,10 @@ namespace Modelo
 
                 if (filasAfectadas > 0)
                 {
-                    return true; 
+                    return true;
                 }
 
-                return false; 
+                return false;
             }
             catch (Exception ex)
             {
@@ -257,16 +347,236 @@ namespace Modelo
 
                 if (filasAfectadas > 0)
                 {
-                    return true;  
+                    return true;
                 }
 
-                return false; 
+                return false;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error al eliminar el cliente: " + ex.Message);
                 return false;
             }
+        }
+
+        // FACTURA CLIENTE
+        // =========================
+        public int GuardarFacturaCliente(int FKid_cliente, int FKid_empleado, DateTime fecha)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "INSERT INTO factura_cliente (FKid_cliente, FKid_empleado, fecha_fac_cliente) VALUES (@Cliente, @Empleado, @Fecha)";
+            cmd.Parameters.AddWithValue("@Cliente", FKid_cliente);
+            cmd.Parameters.AddWithValue("@Empleado", FKid_empleado);
+            cmd.Parameters.AddWithValue("@Fecha", fecha);
+            return cmd.ExecuteNonQuery();
+        }
+
+        public List<FacturaClienteEntity> MostrarFacturasCliente()
+        {
+            List<FacturaClienteEntity> lista = new();
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "SELECT * FROM factura_cliente";
+            var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new FacturaClienteEntity
+                {
+                    cod_factura_cliente = reader.GetInt32(0),
+                    FKid_cliente = reader.GetInt32(1),
+                    FKid_empleado = reader.GetInt32(2),
+                    fecha_fac_cliente = reader.GetDateTime(3)
+                });
+            }
+            reader.Close();
+            return lista;
+        }
+
+        public bool ActualizarFacturaCliente(FacturaClienteEntity factura)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "UPDATE factura_cliente SET FKid_cliente = @Cliente, FKid_empleado = @Empleado, fecha_fac_cliente = @Fecha WHERE cod_factura_cliente = @Cod";
+            cmd.Parameters.AddWithValue("@Cliente", factura.FKid_cliente);
+            cmd.Parameters.AddWithValue("@Empleado", factura.FKid_empleado);
+            cmd.Parameters.AddWithValue("@Fecha", factura.fecha_fac_cliente);
+            cmd.Parameters.AddWithValue("@Cod", factura.cod_factura_cliente);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+        public bool EliminarFacturaCliente(int codFactura)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "DELETE FROM factura_cliente WHERE cod_factura_cliente = @Cod";
+            cmd.Parameters.AddWithValue("@Cod", codFactura);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+        // =========================
+        // DETALLE FACTURA CLIENTE
+        // =========================
+        public int GuardarDetalleFacCliente(DetalleFacturaClienteEntity detalle)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "INSERT INTO detalle_fac_cliente (cantidad, precio_unitario, precio_total, FKcod_factura_cliente, FKcod_producto) VALUES (@Cant, @Unit, @Total, @FKFac, @FKProd)";
+            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
+            cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
+            cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
+            cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_cliente);
+            cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
+            return cmd.ExecuteNonQuery();
+        }
+
+        public List<DetalleFacturaClienteEntity> MostrarDetalleFacCliente()
+        {
+            List<DetalleFacturaClienteEntity> lista = new();
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "SELECT * FROM detalle_fac_cliente";
+            var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new DetalleFacturaClienteEntity
+                {
+                    cod_detalle_fac_cliente = reader.GetInt32(0),
+                    cantidad = reader.GetInt32(1),
+                    precio_unitario = reader.GetDecimal(2),
+                    precio_total = reader.GetDecimal(3),
+                    FKcod_factura_cliente = reader.GetInt32(4),
+                    FKcod_producto = reader.GetInt32(5)
+                });
+            }
+            reader.Close();
+            return lista;
+        }
+
+        public bool ActualizarDetalleFacCliente(DetalleFacturaClienteEntity detalle)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "UPDATE detalle_fac_cliente SET cantidad = @Cant, precio_unitario = @Unit, precio_total = @Total, FKcod_factura_cliente = @FKFac, FKcod_producto = @FKProd WHERE cod_detalle_fac_cliente = @Cod";
+            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
+            cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
+            cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
+            cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_cliente);
+            cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
+            cmd.Parameters.AddWithValue("@Cod", detalle.cod_detalle_fac_cliente);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+        public bool EliminarDetalleFacCliente(int codDetalle)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "DELETE FROM detalle_fac_cliente WHERE cod_detalle_fac_cliente = @Cod";
+            cmd.Parameters.AddWithValue("@Cod", codDetalle);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+        // =========================
+        // FACTURA PROVEEDOR
+        // =========================
+        public int GuardarFacturaProveedor(int FKcod_proveedor, DateTime fecha)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "INSERT INTO factura_proveedor (FKcod_proveedor, fecha_fac_proveedor) VALUES (@Proveedor, @Fecha)";
+            cmd.Parameters.AddWithValue("@Proveedor", FKcod_proveedor);
+            cmd.Parameters.AddWithValue("@Fecha", fecha);
+            return cmd.ExecuteNonQuery();
+        }
+
+        public List<FacturaProveedorEntity> MostrarFacturasProveedor()
+        {
+            List<FacturaProveedorEntity> lista = new();
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "SELECT * FROM factura_proveedor";
+            var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new FacturaProveedorEntity
+                {
+                    cod_factura_proveedor = reader.GetInt32(0),
+                    FKcod_proveedor = reader.GetInt32(1),
+                    fecha_fac_proveedor = reader.GetDateTime(2)
+                });
+            }
+            reader.Close();
+            return lista;
+        }
+
+        public bool ActualizarFacturaProveedor(FacturaProveedorEntity factura)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "UPDATE factura_proveedor SET FKcod_proveedor = @Proveedor, fecha_fac_proveedor = @Fecha WHERE cod_factura_proveedor = @Cod";
+            cmd.Parameters.AddWithValue("@Proveedor", factura.FKcod_proveedor);
+            cmd.Parameters.AddWithValue("@Fecha", factura.fecha_fac_proveedor);
+            cmd.Parameters.AddWithValue("@Cod", factura.cod_factura_proveedor);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+        public bool EliminarFacturaProveedor(int codFactura)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "DELETE FROM factura_proveedor WHERE cod_factura_proveedor = @Cod";
+            cmd.Parameters.AddWithValue("@Cod", codFactura);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+        // =========================
+        // DETALLE FACTURA PROVEEDOR
+        // =========================
+        public int GuardarDetalleFacProveedor(DetalleFacturaProveedorEntity detalle)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "INSERT INTO detalle_fac_proveedor (cantidad, precio_unitario, precio_total, FKcod_factura_proveedor, FKcod_producto) VALUES (@Cant, @Unit, @Total, @FKFac, @FKProd)";
+            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
+            cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
+            cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
+            cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_proveedor);
+            cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
+            return cmd.ExecuteNonQuery();
+        }
+
+        public List<DetalleFacturaProveedorEntity> MostrarDetalleFacProveedor()
+        {
+            List<DetalleFacturaProveedorEntity> lista = new();
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "SELECT * FROM detalle_fac_proveedor";
+            var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new DetalleFacturaProveedorEntity
+                {
+                    cod_detalle_fac_proveedor = reader.GetInt32(0),
+                    cantidad = reader.GetInt32(1),
+                    precio_unitario = reader.GetDecimal(2),
+                    precio_total = reader.GetDecimal(3),
+                    FKcod_factura_proveedor = reader.GetInt32(5),
+                    FKcod_producto = reader.GetInt32(6)
+                });
+            }
+            reader.Close();
+            return lista;
+        }
+
+        public bool ActualizarDetalleFacProveedor(DetalleFacturaProveedorEntity detalle)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "UPDATE detalle_fac_proveedor SET cantidad = @Cant, precio_unitario = @Unit, precio_total = @Total, FKcod_factura_proveedor = @FKFac, FKcod_producto = @FKProd WHERE cod_detalle_fac_proveedor = @Cod";
+            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
+            cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
+            cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
+            cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_proveedor);
+            cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
+            cmd.Parameters.AddWithValue("@Cod", detalle.cod_detalle_fac_proveedor);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+        public bool EliminarDetalleFacProveedor(int codDetalle)
+        {
+            MySqlCommand cmd = GetConnection().CreateCommand();
+            cmd.CommandText = "DELETE FROM detalle_fac_proveedor WHERE cod_detalle_fac_proveedor = @Cod";
+            cmd.Parameters.AddWithValue("@Cod", codDetalle);
+            return cmd.ExecuteNonQuery() > 0;
         }
 
     }

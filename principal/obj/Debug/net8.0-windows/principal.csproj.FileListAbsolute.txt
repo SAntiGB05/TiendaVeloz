@@ -102,3 +102,4 @@ C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.sourcelink.json
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.crearProducto.resources
 C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.crearEmpleado.resources
+C:\Users\User\OneDrive\Escritorio\TiendaVeloz\principal\obj\Debug\net8.0-windows\principal.creaarProveedor.resources
