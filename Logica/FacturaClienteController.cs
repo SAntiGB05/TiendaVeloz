@@ -10,21 +10,11 @@ namespace Logica
 {
     public class FacturaClienteControler
     {
-        public string GuardarFacturaCliente(int FKid_cliente, int FKid_empleado, DateTime fecha)
+        public string GuardarFacturaClienteConDetalles(int FKid_cliente, int FKid_empleado, DateTime fecha, List<DetalleFacturaClienteEntity> detalles)
         {
-            string resultado;
             BaseDatos db = new BaseDatos();
-            int filasInsertadas = db.GuardarFacturaCliente(FKid_cliente, FKid_empleado, fecha);
-
-            if (filasInsertadas > 0)
-            {
-                resultado = "Factura de Cliente Guardada";
-            }
-            else
-            {
-                resultado = "No se pudo guardar la Factura de Cliente";
-            }
-            return resultado;
+            int idFactura = db.GuardarFacturaClienteConDetalles(FKid_cliente, FKid_empleado, fecha, detalles);
+            return idFactura > 0 ? "Factura guardada con éxito (ID: " + idFactura + ")" : "Error al guardar";
         }
 
         public List<FacturaClienteEntity> MostrarFacturasCliente()

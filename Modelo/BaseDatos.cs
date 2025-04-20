@@ -360,16 +360,7 @@ namespace Modelo
         }
 
         // FACTURA CLIENTE
-        // =========================
-        public int GuardarFacturaCliente(int FKid_cliente, int FKid_empleado, DateTime fecha)
-        {
-            MySqlCommand cmd = GetConnection().CreateCommand();
-            cmd.CommandText = "INSERT INTO factura_cliente (FKid_cliente, FKid_empleado, fecha_fac_cliente) VALUES (@Cliente, @Empleado, @Fecha)";
-            cmd.Parameters.AddWithValue("@Cliente", FKid_cliente);
-            cmd.Parameters.AddWithValue("@Empleado", FKid_empleado);
-            cmd.Parameters.AddWithValue("@Fecha", fecha);
-            return cmd.ExecuteNonQuery();
-        }
+        // ========================
 
         public List<FacturaClienteEntity> MostrarFacturasCliente()
         {
@@ -414,17 +405,6 @@ namespace Modelo
         // =========================
         // DETALLE FACTURA CLIENTE
         // =========================
-        public int GuardarDetalleFacCliente(DetalleFacturaClienteEntity detalle)
-        {
-            MySqlCommand cmd = GetConnection().CreateCommand();
-            cmd.CommandText = "INSERT INTO detalle_fac_cliente (cantidad, precio_unitario, precio_total, FKcod_factura_cliente, FKcod_producto) VALUES (@Cant, @Unit, @Total, @FKFac, @FKProd)";
-            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
-            cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
-            cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
-            cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_cliente);
-            cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
-            return cmd.ExecuteNonQuery();
-        }
 
         public List<DetalleFacturaClienteEntity> MostrarDetalleFacCliente()
         {
@@ -470,17 +450,109 @@ namespace Modelo
             return cmd.ExecuteNonQuery() > 0;
         }
 
+        public int GuardarFacturaClienteConDetalles(int FKid_cliente, int FKid_empleado, DateTime fecha, List<DetalleFacturaClienteEntity> detalles)
+        {
+            // Validaciones iniciales
+            if (FKid_cliente <= 0 || FKid_empleado <= 0)
+                throw new ArgumentException("IDs de cliente o empleado inválidos");
+
+            if (detalles == null || detalles.Count == 0)
+                throw new ArgumentException("Debe especificar al menos un detalle de factura");
+
+            using (var connection = GetConnection())
+            using (var transaction = connection.BeginTransaction())
+            {
+                try
+                {
+                    // 1. Guardar la factura cliente
+                    int idFactura;
+                    using (var cmd = connection.CreateCommand())
+                    {
+                        cmd.Transaction = transaction;
+                        cmd.CommandText = @"INSERT INTO factura_cliente 
+                          (FKid_cliente, FKid_empleado, fecha_fac_cliente) 
+                          VALUES (@Cliente, @Empleado, @Fecha);
+                          SELECT LAST_INSERT_ID();";
+
+                        cmd.Parameters.AddWithValue("@Cliente", FKid_cliente);
+                        cmd.Parameters.AddWithValue("@Empleado", FKid_empleado);
+                        cmd.Parameters.AddWithValue("@Fecha", fecha);
+
+                        idFactura = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    // 2. Guardar los detalles asociados
+                    foreach (var detalle in detalles)
+                    {
+                        // Validar detalle
+                        if (detalle.cantidad <= 0 || detalle.precio_unitario <= 0)
+                            throw new ArgumentException("Cantidad y precio deben ser mayores a cero");
+
+                        detalle.FKcod_factura_cliente = idFactura;
+                        detalle.precio_total = detalle.cantidad * detalle.precio_unitario;
+
+                        // Verificar stock antes de actualizar
+                        int stockActual = ObtenerStockProducto(connection, transaction, detalle.FKcod_producto);
+                        if (stockActual < detalle.cantidad)
+                        {
+                            throw new InvalidOperationException(
+                                $"Stock insuficiente para el producto ID {detalle.FKcod_producto}. " +
+                                $"Stock actual: {stockActual}, solicitado: {detalle.cantidad}");
+                        }
+
+                        using (var cmd = connection.CreateCommand())
+                        {
+                            cmd.Transaction = transaction;
+                            cmd.CommandText = @"INSERT INTO detalle_fac_cliente 
+                              (cantidad, precio_unitario, precio_total, FKcod_factura_cliente, FKcod_producto) 
+                              VALUES (@Cant, @Unit, @Total, @FKFac, @FKProd)";
+
+                            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
+                            cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
+                            cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
+                            cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_cliente);
+                            cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
+
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // Actualizar stock
+                        using (var cmd = connection.CreateCommand())
+                        {
+                            cmd.Transaction = transaction;
+                            cmd.CommandText = "UPDATE productos SET stock = stock - @Cant WHERE cod_productos = @Cod";
+                            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
+                            cmd.Parameters.AddWithValue("@Cod", detalle.FKcod_producto);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    transaction.Commit();
+                    return idFactura;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    // Loggear el error adecuadamente
+                    throw new Exception("Error al guardar factura de cliente. Ver inner exception para detalles.", ex);
+                }
+            }
+        }
+
+        private int ObtenerStockProducto(MySqlConnection connection, MySqlTransaction transaction, int idProducto)
+        {
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.Transaction = transaction;
+                cmd.CommandText = "SELECT stock FROM productos WHERE cod_productos = @Id";
+                cmd.Parameters.AddWithValue("@Id", idProducto);
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
         // =========================
         // FACTURA PROVEEDOR
         // =========================
-        public int GuardarFacturaProveedor(int FKcod_proveedor, DateTime fecha)
-        {
-            MySqlCommand cmd = GetConnection().CreateCommand();
-            cmd.CommandText = "INSERT INTO factura_proveedor (FKcod_proveedor, fecha_fac_proveedor) VALUES (@Proveedor, @Fecha)";
-            cmd.Parameters.AddWithValue("@Proveedor", FKcod_proveedor);
-            cmd.Parameters.AddWithValue("@Fecha", fecha);
-            return cmd.ExecuteNonQuery();
-        }
 
         public List<FacturaProveedorEntity> MostrarFacturasProveedor()
         {
@@ -523,17 +595,6 @@ namespace Modelo
         // =========================
         // DETALLE FACTURA PROVEEDOR
         // =========================
-        public int GuardarDetalleFacProveedor(DetalleFacturaProveedorEntity detalle)
-        {
-            MySqlCommand cmd = GetConnection().CreateCommand();
-            cmd.CommandText = "INSERT INTO detalle_fac_proveedor (cantidad, precio_unitario, precio_total, FKcod_factura_proveedor, FKcod_producto) VALUES (@Cant, @Unit, @Total, @FKFac, @FKProd)";
-            cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
-            cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
-            cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
-            cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_proveedor);
-            cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
-            return cmd.ExecuteNonQuery();
-        }
 
         public List<DetalleFacturaProveedorEntity> MostrarDetalleFacProveedor()
         {
@@ -577,6 +638,50 @@ namespace Modelo
             cmd.CommandText = "DELETE FROM detalle_fac_proveedor WHERE cod_detalle_fac_proveedor = @Cod";
             cmd.Parameters.AddWithValue("@Cod", codDetalle);
             return cmd.ExecuteNonQuery() > 0;
+        }
+
+        // Método para guardar factura con transacción
+        public int GuardarFacturaProveedorConDetalles(int FKcod_proveedor, DateTime fecha, List<DetalleFacturaProveedorEntity> detalles)
+        {
+            using (var transaction = GetConnection().BeginTransaction())
+            {
+                try
+                {
+                    // 1. Guardar factura
+                    MySqlCommand cmd = GetConnection().CreateCommand();
+                    cmd.Transaction = transaction;
+                    cmd.CommandText = "INSERT INTO factura_proveedor (FKcod_proveedor, fecha_fac_proveedor) VALUES (@Proveedor, @Fecha); SELECT LAST_INSERT_ID();";
+                    cmd.Parameters.AddWithValue("@Proveedor", FKcod_proveedor);
+                    cmd.Parameters.AddWithValue("@Fecha", fecha);
+                    int idFactura = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    // 2. Guardar detalles
+                    foreach (var detalle in detalles)
+                    {
+                        detalle.FKcod_factura_proveedor = idFactura;
+                        detalle.precio_total = detalle.cantidad * detalle.precio_unitario; // Cálculo automático
+
+                        cmd.Parameters.Clear();
+                        cmd.CommandText = "INSERT INTO detalle_fac_proveedor (cantidad, precio_unitario, precio_total, FKcod_factura_proveedor, FKcod_producto) " +
+                                         "VALUES (@Cant, @Unit, @Total, @FKFac, @FKProd)";
+                        cmd.Parameters.AddWithValue("@Cant", detalle.cantidad);
+                        cmd.Parameters.AddWithValue("@Unit", detalle.precio_unitario);
+                        cmd.Parameters.AddWithValue("@Total", detalle.precio_total);
+                        cmd.Parameters.AddWithValue("@FKFac", detalle.FKcod_factura_proveedor);
+                        cmd.Parameters.AddWithValue("@FKProd", detalle.FKcod_producto);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    return idFactura;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine("Error en transacción: " + ex.Message);
+                    return -1;
+                }
+            }
         }
 
     }

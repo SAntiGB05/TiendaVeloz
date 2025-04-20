@@ -34,18 +34,20 @@
             // lbtittle
             // 
             lbtittle.AutoSize = true;
-            lbtittle.Location = new Point(308, 51);
+            lbtittle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbtittle.Location = new Point(349, 9);
             lbtittle.Name = "lbtittle";
-            lbtittle.Size = new Size(130, 15);
+            lbtittle.Size = new Size(215, 28);
             lbtittle.TabIndex = 0;
             lbtittle.Text = "LA TIENDA MAS VELOZ";
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(914, 547);
             Controls.Add(lbtittle);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -55,5 +57,7 @@
         #endregion
 
         private Label lbtittle;
+        private Label lbTotal;
+        private Label label6;
     }
 }

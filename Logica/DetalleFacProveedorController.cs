@@ -10,29 +10,11 @@ namespace Logica
 {
     public class DetalleFacturaProveedorControler
     {
-        public string GuardarDetalleFacturaProveedor(int cantidad, decimal precio_unitario, decimal precio_total,
-                                                   int FKcod_factura_proveedor, int FKcod_producto)
+        public string GuardarFacturaProveedorConDetalles(int FKcod_proveedor, DateTime fecha, List<DetalleFacturaProveedorEntity> detalles)
         {
-            string resultado;
             BaseDatos db = new BaseDatos();
-            int filasInsertadas = db.GuardarDetalleFacProveedor(new DetalleFacturaProveedorEntity
-            {
-                cantidad = cantidad,
-                precio_unitario = precio_unitario,
-                precio_total = precio_total,
-                FKcod_factura_proveedor = FKcod_factura_proveedor,
-                FKcod_producto = FKcod_producto
-            });
-
-            if (filasInsertadas > 0)
-            {
-                resultado = "Detalle de Factura de Proveedor Guardado";
-            }
-            else
-            {
-                resultado = "No se pudo guardar el Detalle de Factura de Proveedor";
-            }
-            return resultado;
+            int idFactura = db.GuardarFacturaProveedorConDetalles(FKcod_proveedor, fecha, detalles);
+            return idFactura > 0 ? "Factura y detalles guardados correctamente." : "Error al guardar.";
         }
 
         public List<DetalleFacturaProveedorEntity> MostrarDetallesFacturaProveedor()
